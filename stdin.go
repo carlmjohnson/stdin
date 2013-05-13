@@ -1,3 +1,7 @@
+//stdin is a simple utility to make it even easier to read in lines of text.
+//
+//Requires Go 1.1.
+
 package stdin
 
 import (
@@ -7,15 +11,15 @@ import (
 	"os"
 )
 
-func All() string {
+func Bytes() []byte {
 	bytes, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		log.Fatalln("Error reading standard input:", err)
 	}
-	return string(bytes)
+	return bytes
 }
 
-func AllLines() (lines []string) {
+func LineSlice() (lines []string) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
@@ -26,10 +30,11 @@ func AllLines() (lines []string) {
 	return lines
 }
 
-func Lines() chan string {
+func LineChan() chan string {
 	scanner := bufio.NewScanner(os.Stdin)
 	ch := make(chan string)
 	go func() {
+		defer close(ch)
 		for scanner.Scan() {
 			ch <- scanner.Text()
 		}
